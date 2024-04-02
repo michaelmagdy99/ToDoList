@@ -7,8 +7,9 @@
 
 #import <UIKit/UIKit.h>
 #import "TaskModel.h"
+#import "DetailsTaskDelegate.h"
 
-@interface DoneViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
+@interface DoneViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, DetailsTaskDelegate>
 
 
 @property (nonatomic, strong) NSMutableArray<TaskModel *> *doneList;

@@ -11,14 +11,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface TaskModel : NSObject
+@interface TaskModel : NSObject <NSCoding>
 
 @property NSString *taskName;
 @property NSString *taskDescription;
 @property NSString *taskDate;
 @property int taskPriority;
 @property int taskStatus;
-
 @end
 
 NS_ASSUME_NONNULL_END

@@ -10,29 +10,29 @@
 #import "DetailsTaskViewController.h"
 
 @interface InProgressViewController ()
-@property (weak, nonatomic) IBOutlet UITableView *InProgressTableView;
 
 @end
 
 @implementation InProgressViewController
-
+{
+    NSUserDefaults *userDefault;
+    NSData *defaultTasks;
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
      [self.InProgressTableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"inProgressCell"];
+   
+    userDefault = [NSUserDefaults standardUserDefaults];
+        
+    defaultTasks = [userDefault objectForKey:@"InProgressTaskList"];
+        if (defaultTasks != nil) {
+            self.InProgressList = [NSKeyedUnarchiver unarchiveObjectWithData:defaultTasks];
+            } else {
+                self.InProgressList = [[NSMutableArray alloc] init];
+            }
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
-
 
 - (void)viewWillAppear:(BOOL)animated{
     [self.InProgressTableView reloadData];
@@ -77,6 +77,10 @@
  
         [self.InProgressList removeObjectAtIndex:indexPath.row];
          
+        defaultTasks = [NSKeyedArchiver archivedDataWithRootObject:self.InProgressList];
+            [userDefault setObject:defaultTasks forKey:@"InProgressTaskList"];
+            BOOL synchronizeResult = [userDefault synchronize];
+
         
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     } else if (editingStyle == UITableViewCellEditingStyleInsert) {
@@ -96,8 +100,26 @@
     DetailsTaskViewController *detailViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"DetailsTaskViewController"];
     
     detailViewController.task = selectTask;
+    detailViewController.delegate = self;
     
     [self.navigationController pushViewController:detailViewController animated:YES];
 }
+
+
+- (void)didEditTask:(TaskModel *)task {
+    
+    NSUInteger index = [self.InProgressList indexOfObject:task];
+        
+    if (index != NSNotFound) {
+        self.InProgressList[index] = task;
+            
+        NSData *defaultTasks = [NSKeyedArchiver archivedDataWithRootObject:self.InProgressList];
+        [userDefault setObject:defaultTasks forKey:@"InProgressTaskList"];
+        [userDefault synchronize];
+            
+        [self.InProgressTableView reloadData];
+    }
+}
+
 
 @end

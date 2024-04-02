@@ -18,11 +18,24 @@
 
 @end
 
-@implementation AddTaskViewController
+@implementation AddTaskViewController{
+    NSUserDefaults *userDefault;
+    NSData *defaultTasks;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
+    userDefault = [NSUserDefaults standardUserDefaults];
+        
+    defaultTasks = [userDefault objectForKey:@"TaskList"];
+        if (defaultTasks != nil) {
+            self.toDoViewController.ToDotaskList = [NSKeyedUnarchiver unarchiveObjectWithData:defaultTasks];
+            } else {
+                self.toDoViewController.ToDotaskList = [NSMutableArray new];
+            }
+
 }
 
 - (IBAction)saveTask:(id)sender {
@@ -56,21 +69,17 @@
             break;
     }
     
-    newTask.taskStatus = 0 ;
+    newTask.taskStatus = -1 ;
     
     [self.toDoViewController.ToDotaskList addObject:newTask];
+
+    defaultTasks = [NSKeyedArchiver archivedDataWithRootObject:self.toDoViewController.ToDotaskList];
+        [userDefault setObject:defaultTasks forKey:@"TaskList"];
+        BOOL synchronizeResult = [userDefault synchronize];
+        
     [self.navigationController popViewControllerAnimated:YES];
 }
 
 @end
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 

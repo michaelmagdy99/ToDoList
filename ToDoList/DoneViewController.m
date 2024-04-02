@@ -14,11 +14,27 @@
 
 @end
 
-@implementation DoneViewController
+@implementation DoneViewController{
+    NSUserDefaults *userDefault;
+    NSData *defaultTasks;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
+    
+     [self.doneTableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"doneCell"];
+    
+    
+     userDefault = [NSUserDefaults standardUserDefaults];
+         
+     defaultTasks = [userDefault objectForKey:@"DoneTaskList"];
+         if (defaultTasks != nil) {
+             self.doneList = [NSKeyedUnarchiver unarchiveObjectWithData:defaultTasks];
+             } else {
+                 self.doneList = [[NSMutableArray alloc] init];
+             }
 }
 
 
@@ -70,6 +86,10 @@
  
         [self.doneList removeObjectAtIndex:indexPath.row];
          
+        defaultTasks = [NSKeyedArchiver archivedDataWithRootObject:self.doneList];
+            [userDefault setObject:defaultTasks forKey:@"DoneTaskList"];
+            BOOL synchronizeResult = [userDefault synchronize];
+
         
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     } else if (editingStyle == UITableViewCellEditingStyleInsert) {
@@ -89,9 +109,24 @@
     DetailsTaskViewController *detailViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"DetailsTaskViewController"];
     
     detailViewController.task = selectTask;
+    detailViewController.delegate = self;
     
     [self.navigationController pushViewController:detailViewController animated:YES];
 }
 
+
+- (void)didEditTask:(TaskModel *)task {
+    NSUInteger index = [self.doneList indexOfObject:task];
+        
+    if (index != NSNotFound) {
+        self.doneList[index] = task;
+            
+        NSData *defaultTasks = [NSKeyedArchiver archivedDataWithRootObject:self.doneList];
+        [userDefault setObject:defaultTasks forKey:@"DoneTaskList"];
+        [userDefault synchronize];
+            
+        [self.doneTableView reloadData];
+    }
+}
 
 @end

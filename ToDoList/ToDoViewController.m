@@ -11,24 +11,44 @@
 #import "AddTaskViewController.h"
 
 @interface ToDoViewController ()
-
-@property (weak, nonatomic) IBOutlet UITableView *toDoTableView;
 @property (weak, nonatomic) IBOutlet UISearchBar *searchbarContacts;
-@property (strong, nonatomic) NSMutableArray *filteredTasks;
 
 @end
 
-@implementation ToDoViewController
+@implementation ToDoViewController{
+    NSUserDefaults *userDefault;
+    NSData *defaultTasks;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
-   
+    
     [self.toDoTableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"toDoCell"];
     
-    self.ToDotaskList = [[NSMutableArray alloc] init];
-    
+    userDefault = [NSUserDefaults standardUserDefaults];
+    defaultTasks = [userDefault objectForKey:@"TaskList"];
+        if (defaultTasks != nil) {
+            self.ToDotaskList = [NSKeyedUnarchiver unarchiveObjectWithData:defaultTasks];
+            } else {
+                self.ToDotaskList = [[NSMutableArray alloc] init];
+            }
 }
+
+
+- (void)didEditTask:(TaskModel *)task {
+    NSUInteger index = [self.ToDotaskList indexOfObject:task];
+        
+    if (index != NSNotFound) {
+        self.ToDotaskList[index] = task;
+            
+        NSData *defaultTasks = [NSKeyedArchiver archivedDataWithRootObject:self.ToDotaskList];
+        [userDefault setObject:defaultTasks forKey:@"TaskList"];
+        [userDefault synchronize];
+            
+        [self.toDoTableView reloadData];
+    }
+}
+
 - (IBAction)addTask:(id)sender {
    
     AddTaskViewController *addTaskV = [self.storyboard instantiateViewControllerWithIdentifier:@"AddTaskViewController"];
@@ -39,12 +59,9 @@
 }
 
 
-
 - (void)viewWillAppear:(BOOL)animated{
     [self.toDoTableView reloadData];
 }
-
-
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
@@ -56,8 +73,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"toDoCell" forIndexPath:indexPath];
-    TaskModel *taskModel = [TaskModel new];
-    taskModel = self.ToDotaskList[indexPath.row];
+    TaskModel *taskModel = self.ToDotaskList[indexPath.row];
     
     cell.textLabel.text = taskModel.taskName;
     
@@ -79,15 +95,16 @@
     return cell;
 }
 
-
-
 // Override to support editing the table view.
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
  
         [self.ToDotaskList removeObjectAtIndex:indexPath.row];
-         
-        
+ 
+        defaultTasks = [NSKeyedArchiver archivedDataWithRootObject:self.ToDotaskList];
+            [userDefault setObject:defaultTasks forKey:@"TaskList"];
+            BOOL synchronizeResult = [userDefault synchronize];
+
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     } else if (editingStyle == UITableViewCellEditingStyleInsert) {
         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
@@ -102,13 +119,16 @@
     TaskModel *selectTask;
     
     selectTask = self.ToDotaskList[indexPath.row];
+    
+    
         
     DetailsTaskViewController *detailViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"DetailsTaskViewController"];
     
     detailViewController.task = selectTask;
     
+    detailViewController.delegate = self;
+    
     [self.navigationController pushViewController:detailViewController animated:YES];
 }
-
 
 @end

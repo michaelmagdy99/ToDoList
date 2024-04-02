@@ -8,6 +8,7 @@
 #import "DetailsTaskViewController.h"
 
 @interface DetailsTaskViewController ()
+
 @property (weak, nonatomic) IBOutlet UITextField *taskNameTV;
 @property (weak, nonatomic) IBOutlet UITextField *tasDescTv;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *priotoriySelectEdit;
@@ -16,29 +17,36 @@
 
 @end
 
-@implementation DetailsTaskViewController
+@implementation DetailsTaskViewController {
+    NSUserDefaults *userDefault;
+    NSData *defaultTasks;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
-    self.taskNameTV.text = _task.taskName;
-    self.tasDescTv.text = _task.taskDescription;
-    self.TaskdateTV.text = _task.taskDate;
+    
+    userDefault = [NSUserDefaults standardUserDefaults];
+    
+    
+    self.taskNameTV.text = self.task.taskName;
+    self.tasDescTv.text = self.task.taskDescription;
+    self.TaskdateTV.text = self.task.taskDate;
     self.priotoriySelectEdit.selectedSegmentIndex = self.task.taskPriority;
+    self.editSelector.selectedSegmentIndex = self.task.taskStatus;
+    
 }
 
 - (IBAction)editAction:(id)sender {
 
     self.task.taskName = self.taskNameTV.text;
     self.task.taskDescription = self.tasDescTv.text;
-    
+        
     NSDate *today = [NSDate date];
     NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
     [dateFormat setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
     NSString *dateString = [dateFormat stringFromDate:today];
-
     self.task.taskDate = dateString;
-    
+        
     switch (self.priotoriySelectEdit.selectedSegmentIndex) {
         case 0:
             self.task.taskPriority = 0;
@@ -46,36 +54,53 @@
         case 1:
             self.task.taskPriority = 1;
             break;
-        case 2:
+            case 2:
             self.task.taskPriority = 2;
             break;
         default:
             break;
     }
-    
+        
     switch (self.editSelector.selectedSegmentIndex) {
-        case 0:
-            self.task.taskStatus = 0; //inprogress
-            break;
+        case 0: {
+            if (self.task.taskStatus == -1) {
+                
+                if ([self.toDoViewController.ToDotaskList containsObject:self.task]) {
+                    [self.toDoViewController.ToDotaskList removeObject:self.task];
+                    NSData *todoTasksData = [NSKeyedArchiver archivedDataWithRootObject:self.toDoViewController.ToDotaskList];
+                        [userDefault setObject:todoTasksData forKey:@"TaskList"];
+                        [userDefault synchronize];
+                        [self.toDoViewController.toDoTableView reloadData];
+                    
+                    }
+                
+                self.task.taskStatus = 0;
+                
+                    if (![self.inProgressViewController.InProgressList containsObject:self.task]) {
+                        [self.inProgressViewController.InProgressList addObject:self.task];
+                        NSData *inProgressTasksData = [NSKeyedArchiver archivedDataWithRootObject:self.inProgressViewController.InProgressList];
+                        [userDefault setObject:inProgressTasksData forKey:@"InProgressTaskList"];
+                        [userDefault synchronize];
+                        [self.inProgressViewController.InProgressTableView reloadData];
+                    }
+                }
+                 
+                break;
+            }
         case 1:
-            self.task.taskPriority = 1; //done
+                // Done
+                self.task.taskStatus = 1;
+                
             break;
-        default:
-            break;
-    }
+            default:
+                break;
+        }
+
+        if ([self.delegate respondsToSelector:@selector(didEditTask:)]) {
+            [self.delegate didEditTask:self.task];
+        }
     
-    [self.navigationController popViewControllerAnimated:YES];
+        [self.navigationController popViewControllerAnimated:YES];
 }
-
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

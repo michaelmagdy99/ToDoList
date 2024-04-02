@@ -22,6 +22,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		EC91BDFF2BBC76C50091C37F /* DetailsTaskDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetailsTaskDelegate.h; sourceTree = "<group>"; };
 		EC91E3622BBBFE7F00529A00 /* ToDoList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ToDoList.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC91E3652BBBFE7F00529A00 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		EC91E3662BBBFE7F00529A00 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -97,6 +98,7 @@
 				ECDD4D422BBC0A5C00AF8E28 /* AddTaskViewController.m */,
 				ECDD4D442BBC0A7200AF8E28 /* DetailsTaskViewController.h */,
 				ECDD4D452BBC0A7200AF8E28 /* DetailsTaskViewController.m */,
+				EC91BDFF2BBC76C50091C37F /* DetailsTaskDelegate.h */,
 			);
 			path = ToDoList;
 			sourceTree = "<group>";
