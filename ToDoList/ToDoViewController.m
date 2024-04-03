@@ -15,6 +15,9 @@
 @property (weak, nonatomic) IBOutlet UITextField *searchTF;
 @property (weak, nonatomic) IBOutlet UILabel *noData;
 
+@property (nonatomic, strong) UILabel *emptyListLabel;
+
+
 @end
 
 @implementation ToDoViewController{
@@ -25,9 +28,20 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.noData.hidden = YES;
-
+    _noData.hidden = YES;
+    
     [self.toDoTableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"toDoCell"];
+    
+    
+    
+    self.emptyListLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 50)];
+        self.emptyListLabel.center = CGPointMake(self.view.frame.size.width / 2, self.view.frame.size.height / 2);
+        self.emptyListLabel.textAlignment = NSTextAlignmentCenter;
+        self.emptyListLabel.text = @"No tasks to display";
+        self.emptyListLabel.hidden = YES;
+    
+    [self.view addSubview:self.emptyListLabel];
+
 }
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
@@ -39,6 +53,8 @@
 
 
 - (void)textFieldDidChange:(NSString *)searchText {
+    self.noData.hidden = YES;
+
     if (searchText.length == 0) {
         self.ToDotaskList = [NSMutableArray arrayWithArray:[NSKeyedUnarchiver unarchiveObjectWithData:[userDefault objectForKey:@"TaskList"]]];
     } else {
@@ -105,6 +121,10 @@
     _searchTF.autocapitalizationType = UITextAutocapitalizationTypeNone;
     
     printf("%lu", (unsigned long)self.ToDotaskList.count);
+    
+    self.emptyListLabel.hidden = (self.ToDotaskList.count > 0);
+
+    
     [self.toDoTableView reloadData];
 }
 

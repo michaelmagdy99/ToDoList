@@ -11,6 +11,8 @@
 
 @interface InProgressViewController ()
 
+@property (nonatomic, strong) UILabel *emptyListLabel;
+
 @end
 
 @implementation InProgressViewController
@@ -22,16 +24,22 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    
-    self.InProgressList = [[NSMutableArray alloc] init];
 
+    self.emptyListLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 50)];
+        self.emptyListLabel.center = CGPointMake(self.view.frame.size.width / 2, self.view.frame.size.height / 2);
+        self.emptyListLabel.textAlignment = NSTextAlignmentCenter;
+        self.emptyListLabel.text = @"No tasks to display";
+        self.emptyListLabel.hidden = YES;
+    
+    [self.view addSubview:self.emptyListLabel];
+
+    
     [self.InProgressTableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"inProgressCell"];
-    
-    
 }
 
 
 - (void)viewWillAppear:(BOOL)animated{
+    
     userDefault = [NSUserDefaults standardUserDefaults];
 
     defaultTasks = [userDefault objectForKey:@"InProgressTaskList"];
@@ -42,6 +50,11 @@
     }else{
         self.InProgressList =[NSMutableArray new];
     }
+    
+    self.emptyListLabel.hidden = (self.InProgressList.count > 0);
+    
+    [self.InProgressTableView reloadData];
+
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {

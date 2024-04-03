@@ -10,6 +10,7 @@
 #import "DetailsTaskViewController.h"
 
 @interface DoneViewController ()
+@property (nonatomic, strong) UILabel *emptyListLabel;
 
 @end
 
@@ -22,9 +23,17 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
+    self.emptyListLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 50)];
+        self.emptyListLabel.center = CGPointMake(self.view.frame.size.width / 2, self.view.frame.size.height / 2);
+        self.emptyListLabel.textAlignment = NSTextAlignmentCenter;
+        self.emptyListLabel.text = @"No tasks to display";
+        self.emptyListLabel.hidden = YES;
+    
+    [self.view addSubview:self.emptyListLabel];
+
+    
     
      [self.doneTableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"doneCell"];
-
 }
 
 
@@ -41,6 +50,8 @@
              }
     
     
+    self.emptyListLabel.hidden = (self.doneList.count > 0);
+
     [self.doneTableView reloadData];
 }
 
@@ -131,6 +142,13 @@
 
 - (void)didEditTask:(TaskModel *)task {
     NSUInteger index = [self.doneList indexOfObject:task];
+    
+    if (task.taskStatus == 1) {
+        [self.doneList addObject:task];
+    }else{
+        [self.doneList removeObjectAtIndex:index];
+    }
+    
     defaultTasks = [NSKeyedArchiver archivedDataWithRootObject:self.doneList];
     [userDefault setObject:defaultTasks forKey:@"DoneTaskList"];
     [userDefault synchronize];

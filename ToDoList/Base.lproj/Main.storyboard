@@ -115,12 +115,12 @@
                                 </connections>
                             </tableView>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pPg-NK-Wtu">
-                                <rect key="frame" x="-6" y="68" width="391" height="44"/>
+                                <rect key="frame" x="-7" y="68" width="390" height="43"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <items>
                                     <barButtonItem style="plain" id="TCj-4V-4fX">
                                         <textField key="customView" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Search" textAlignment="natural" minimumFontSize="17" id="jqd-rP-i3U">
-                                            <rect key="frame" x="16" y="5" width="322" height="34"/>
+                                            <rect key="frame" x="16" y="4.6666666666666679" width="322" height="34"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                             <textInputTraits key="textInputTraits"/>
@@ -245,7 +245,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fQs-2q-tx8">
-                                <rect key="frame" x="48" y="481" width="297" height="35"/>
+                                <rect key="frame" x="40" y="466" width="297" height="35"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" title="Save"/>
@@ -440,6 +440,7 @@
                     </view>
                     <connections>
                         <outlet property="TaskdateTV" destination="BQJ-e1-3Ez" id="dAk-jH-L1l"/>
+                        <outlet property="editButton" destination="BTz-vN-SIM" id="YQU-5C-PPt"/>
                         <outlet property="editSelector" destination="HLt-ZP-f7G" id="Rh3-SO-I5Q"/>
                         <outlet property="priotoriySelectEdit" destination="QzT-HO-ryw" id="opX-bi-KMX"/>
                         <outlet property="tasDescTv" destination="QC9-fn-gWA" id="3St-ui-bm4"/>
