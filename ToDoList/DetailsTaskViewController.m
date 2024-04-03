@@ -27,7 +27,6 @@
     
     userDefault = [NSUserDefaults standardUserDefaults];
     
-    
     self.taskNameTV.text = self.task.taskName;
     self.tasDescTv.text = self.task.taskDescription;
     self.TaskdateTV.text = self.task.taskDate;
@@ -37,70 +36,68 @@
 }
 
 - (IBAction)editAction:(id)sender {
-
-    self.task.taskName = self.taskNameTV.text;
-    self.task.taskDescription = self.tasDescTv.text;
+    
+    
+    
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Are You sure Edit Task?" message:@"" preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction *yes = [UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
-    NSDate *today = [NSDate date];
-    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-    [dateFormat setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-    NSString *dateString = [dateFormat stringFromDate:today];
-    self.task.taskDate = dateString;
         
-    switch (self.priotoriySelectEdit.selectedSegmentIndex) {
-        case 0:
-            self.task.taskPriority = 0;
-            break;
-        case 1:
-            self.task.taskPriority = 1;
-            break;
-            case 2:
-            self.task.taskPriority = 2;
-            break;
-        default:
-            break;
-    }
         
-    switch (self.editSelector.selectedSegmentIndex) {
-        case 0: {
-            if (self.task.taskStatus == -1) {
-                
-                if ([self.toDoViewController.ToDotaskList containsObject:self.task]) {
-                    [self.toDoViewController.ToDotaskList removeObject:self.task];
-                    NSData *todoTasksData = [NSKeyedArchiver archivedDataWithRootObject:self.toDoViewController.ToDotaskList];
-                        [userDefault setObject:todoTasksData forKey:@"TaskList"];
-                        [userDefault synchronize];
-                        [self.toDoViewController.toDoTableView reloadData];
-                    
-                    }
-                
-                self.task.taskStatus = 0;
-                
-                    if (![self.inProgressViewController.InProgressList containsObject:self.task]) {
-                        [self.inProgressViewController.InProgressList addObject:self.task];
-                        NSData *inProgressTasksData = [NSKeyedArchiver archivedDataWithRootObject:self.inProgressViewController.InProgressList];
-                        [userDefault setObject:inProgressTasksData forKey:@"InProgressTaskList"];
-                        [userDefault synchronize];
-                        [self.inProgressViewController.InProgressTableView reloadData];
-                    }
-                }
-                 
+        self.task.taskName = self.taskNameTV.text;
+        self.task.taskDescription = self.tasDescTv.text;
+        
+        NSDate *today = [NSDate date];
+        NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+        [dateFormat setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+        NSString *dateString = [dateFormat stringFromDate:today];
+        self.task.taskDate = dateString;
+        
+        switch (self.priotoriySelectEdit.selectedSegmentIndex) {
+            case 0:
+                self.task.taskPriority = 0;
                 break;
-            }
-        case 1:
-                // Done
-                self.task.taskStatus = 1;
-                
-            break;
+            case 1:
+                self.task.taskPriority = 1;
+                break;
+            case 2:
+                self.task.taskPriority = 2;
+                break;
             default:
                 break;
         }
-
+        
+        switch (self.editSelector.selectedSegmentIndex) {
+            case 0:
+                // in progress
+                self.task.taskStatus = 0;
+                break;
+                
+            case 1:
+                // Done
+                self.task.taskStatus = 1;
+                break;
+            default:
+                break;
+        }
+        
         if ([self.delegate respondsToSelector:@selector(didEditTask:)]) {
             [self.delegate didEditTask:self.task];
         }
-    
+        
         [self.navigationController popViewControllerAnimated:YES];
+        
+        
+    }];
+    
+    UIAlertAction *no = [UIAlertAction actionWithTitle:@"No" style:UIAlertActionStyleDestructive handler:nil];
+    
+    [alert addAction:no];
+    [alert addAction:yes];
+    
+    [self presentViewController:alert animated:YES completion:nil];
+    
 }
 
 @end

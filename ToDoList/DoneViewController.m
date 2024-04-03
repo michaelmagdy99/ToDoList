@@ -10,7 +10,6 @@
 #import "DetailsTaskViewController.h"
 
 @interface DoneViewController ()
-@property (weak, nonatomic) IBOutlet UITableView *doneTableView;
 
 @end
 
@@ -83,15 +82,20 @@
 // Override to support editing the table view.
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
- 
-        [self.doneList removeObjectAtIndex:indexPath.row];
-         
-        defaultTasks = [NSKeyedArchiver archivedDataWithRootObject:self.doneList];
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Are You sure delete Task?" message:@"" preferredStyle:UIAlertControllerStyleAlert];
+        
+        UIAlertAction *yes = [UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            
+            [self.doneList removeObjectAtIndex:indexPath.row];
+            
+            defaultTasks = [NSKeyedArchiver archivedDataWithRootObject:self.doneList];
             [userDefault setObject:defaultTasks forKey:@"DoneTaskList"];
             BOOL synchronizeResult = [userDefault synchronize];
-
+            
+            [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
         
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        }];
+       
     } else if (editingStyle == UITableViewCellEditingStyleInsert) {
         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
     }
@@ -116,16 +120,22 @@
 
 
 - (void)didEditTask:(TaskModel *)task {
-    NSUInteger index = [self.doneList indexOfObject:task];
+    if (task.taskStatus == 1){
+        [self.doneList addObject:task];
+    
+        NSUInteger index = [self.doneList indexOfObject:task];
         
-    if (index != NSNotFound) {
-        self.doneList[index] = task;
+        if (index != NSNotFound) {
+            self.doneList[index] = task;
             
-        NSData *defaultTasks = [NSKeyedArchiver archivedDataWithRootObject:self.doneList];
-        [userDefault setObject:defaultTasks forKey:@"DoneTaskList"];
-        [userDefault synchronize];
+            NSData *defaultTasks = [NSKeyedArchiver archivedDataWithRootObject:self.doneList];
+            [userDefault setObject:defaultTasks forKey:@"DoneTaskList"];
+            [userDefault synchronize];
             
-        [self.doneTableView reloadData];
+            [self.doneTableView reloadData];
+        }
+    }else{
+        
     }
 }
 

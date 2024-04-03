@@ -12,6 +12,8 @@
 @interface DoneViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, DetailsTaskDelegate>
 
 
+@property (weak, nonatomic) IBOutlet UITableView *doneTableView;
+
 @property (nonatomic, strong) NSMutableArray<TaskModel *> *doneList;
 
 @end
