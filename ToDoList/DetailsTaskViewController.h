@@ -15,14 +15,10 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface DetailsTaskViewController : UIViewController
-
 @property TaskModel *task;
-@property (nonatomic, weak)  ToDoViewController *toDoViewController;
-@property (nonatomic, weak)  InProgressViewController *inProgressViewController;
-@property (nonatomic, weak)  DoneViewController *doneViewController;
-
-
 @property (nonatomic, weak) id <DetailsTaskDelegate> delegate;
+
+@property int indexxx;
 
 
 @end

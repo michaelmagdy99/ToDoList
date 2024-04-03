@@ -18,26 +18,30 @@
     NSUserDefaults *userDefault;
     NSData *defaultTasks;
 }
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
+    self.InProgressList = [[NSMutableArray alloc] init];
+
     [self.InProgressTableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"inProgressCell"];
     
-    userDefault = [NSUserDefaults standardUserDefaults];
-    
-    defaultTasks = [userDefault objectForKey:@"InProgressTaskList"];
-    if (defaultTasks != nil) {
-        self.InProgressList = [NSKeyedUnarchiver unarchiveObjectWithData:defaultTasks];
-    } else {
-        self.InProgressList = [[NSMutableArray alloc] init];
-    }
     
 }
 
+
 - (void)viewWillAppear:(BOOL)animated{
-    printf("%lu" , (unsigned long)self.InProgressList.count);
-    [self.InProgressTableView reloadData];
+    userDefault = [NSUserDefaults standardUserDefaults];
+
+    defaultTasks = [userDefault objectForKey:@"InProgressTaskList"];
+    self.InProgressList = [NSKeyedUnarchiver unarchiveObjectWithData:defaultTasks];
+    if(defaultTasks != nil){
+        printf("%lu" , (unsigned long)self.InProgressList.count);
+        [self.InProgressTableView reloadData];
+    }else{
+        self.InProgressList =[NSMutableArray new];
+    }
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -117,6 +121,8 @@
     detailViewController.task = selectTask;
     detailViewController.delegate = self;
     
+    
+    
     [self.navigationController pushViewController:detailViewController animated:YES];
 }
 
@@ -124,14 +130,14 @@
 - (void)didEditTask:(TaskModel *)task {
     NSUInteger index = [self.InProgressList indexOfObject:task];
     
-    [self.InProgressList removeObjectAtIndex:index];
-    
     if (task.taskStatus == 0) {
         [self.InProgressList addObject:task];
+    }else{
+        [self.InProgressList removeObjectAtIndex:index];
     }
     
-    NSData *inProgressListData = [NSKeyedArchiver archivedDataWithRootObject:self.InProgressList];
-    [userDefault setObject:inProgressListData forKey:@"InProgressTaskList"];
+    defaultTasks = [NSKeyedArchiver archivedDataWithRootObject:self.InProgressList];
+    [userDefault setObject:defaultTasks forKey:@"InProgressTaskList"];
     [userDefault synchronize];
     
     [self.InProgressTableView reloadData];

@@ -29,13 +29,15 @@
     
     userDefault = [NSUserDefaults standardUserDefaults];
         
+}
+
+- (void)viewWillAppear:(BOOL)animated{
     defaultTasks = [userDefault objectForKey:@"TaskList"];
         if (defaultTasks != nil) {
             self.toDoViewController.ToDotaskList = [NSKeyedUnarchiver unarchiveObjectWithData:defaultTasks];
             } else {
                 self.toDoViewController.ToDotaskList = [NSMutableArray new];
             }
-
 }
 
 - (IBAction)saveTask:(id)sender {
@@ -53,6 +55,21 @@
     
     // Set date
     newTask.taskDate = dateString;
+    
+    
+    //
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
+
+    NSString *dtString = dateString;
+    NSDate *date = [dateFormatter dateFromString:dtString];
+
+    NSCalendar *calendar = [NSCalendar autoupdatingCurrentCalendar] ;
+    NSDateComponents *components = [calendar components:(NSCalendarUnitYear | NSCalendarUnitMonth |  NSCalendarUnitDay | NSCalendarUnitHour | NSCalendarUnitMinute) fromDate:date];
+    components.minute -= 30;
+    NSDate *fireDate = [calendar dateFromComponents:components];
+    
     
     // Set priority
     switch (self.prioritySelector.selectedSegmentIndex) {

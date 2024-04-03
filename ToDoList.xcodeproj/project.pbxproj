@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EC0F2F3C2BBD5B9B0094A561 /* InProgressViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = ECDD4D3F2BBC0A4600AF8E28 /* InProgressViewController.m */; };
 		EC91E3672BBBFE7F00529A00 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = EC91E3662BBBFE7F00529A00 /* AppDelegate.m */; };
 		EC91E36A2BBBFE7F00529A00 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = EC91E3692BBBFE7F00529A00 /* SceneDelegate.m */; };
 		EC91E36D2BBBFE7F00529A00 /* DoneViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EC91E36C2BBBFE7F00529A00 /* DoneViewController.m */; };
@@ -16,7 +17,6 @@
 		EC91E3782BBBFE8200529A00 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = EC91E3772BBBFE8200529A00 /* main.m */; };
 		EC91E3802BBBFF9600529A00 /* TaskModel.m in Sources */ = {isa = PBXBuildFile; fileRef = EC91E37F2BBBFF9600529A00 /* TaskModel.m */; };
 		ECDD4D3D2BBC0A0E00AF8E28 /* ToDoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = ECDD4D3C2BBC0A0E00AF8E28 /* ToDoViewController.m */; };
-		ECDD4D402BBC0A4600AF8E28 /* InProgressViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = ECDD4D3F2BBC0A4600AF8E28 /* InProgressViewController.m */; };
 		ECDD4D432BBC0A5C00AF8E28 /* AddTaskViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = ECDD4D422BBC0A5C00AF8E28 /* AddTaskViewController.m */; };
 		ECDD4D462BBC0A7200AF8E28 /* DetailsTaskViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = ECDD4D452BBC0A7200AF8E28 /* DetailsTaskViewController.m */; };
 /* End PBXBuildFile section */
@@ -174,7 +174,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				ECDD4D462BBC0A7200AF8E28 /* DetailsTaskViewController.m in Sources */,
-				ECDD4D402BBC0A4600AF8E28 /* InProgressViewController.m in Sources */,
 				EC91E36D2BBBFE7F00529A00 /* DoneViewController.m in Sources */,
 				EC91E3672BBBFE7F00529A00 /* AppDelegate.m in Sources */,
 				ECDD4D3D2BBC0A0E00AF8E28 /* ToDoViewController.m in Sources */,
@@ -182,6 +181,7 @@
 				ECDD4D432BBC0A5C00AF8E28 /* AddTaskViewController.m in Sources */,
 				EC91E3782BBBFE8200529A00 /* main.m in Sources */,
 				EC91E36A2BBBFE7F00529A00 /* SceneDelegate.m in Sources */,
+				EC0F2F3C2BBD5B9B0094A561 /* InProgressViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

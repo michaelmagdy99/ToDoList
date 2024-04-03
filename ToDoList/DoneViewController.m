@@ -24,6 +24,11 @@
     
     
      [self.doneTableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"doneCell"];
+
+}
+
+
+- (void)viewWillAppear:(BOOL)animated{
     
     
      userDefault = [NSUserDefaults standardUserDefaults];
@@ -34,11 +39,8 @@
              } else {
                  self.doneList = [[NSMutableArray alloc] init];
              }
-}
-
-
-
-- (void)viewWillAppear:(BOOL)animated{
+    
+    
     [self.doneTableView reloadData];
 }
 
@@ -95,6 +97,14 @@
             [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
         
         }];
+        
+        
+        UIAlertAction *no = [UIAlertAction actionWithTitle:@"No" style:UIAlertActionStyleDestructive handler:nil];
+        
+        [alert addAction:no];
+        [alert addAction:yes];
+        
+        [self presentViewController:alert animated:YES completion:nil];
        
     } else if (editingStyle == UITableViewCellEditingStyleInsert) {
         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
@@ -120,23 +130,12 @@
 
 
 - (void)didEditTask:(TaskModel *)task {
-    if (task.taskStatus == 1){
-        [self.doneList addObject:task];
+    NSUInteger index = [self.doneList indexOfObject:task];
+    defaultTasks = [NSKeyedArchiver archivedDataWithRootObject:self.doneList];
+    [userDefault setObject:defaultTasks forKey:@"DoneTaskList"];
+    [userDefault synchronize];
     
-        NSUInteger index = [self.doneList indexOfObject:task];
-        
-        if (index != NSNotFound) {
-            self.doneList[index] = task;
-            
-            NSData *defaultTasks = [NSKeyedArchiver archivedDataWithRootObject:self.doneList];
-            [userDefault setObject:defaultTasks forKey:@"DoneTaskList"];
-            [userDefault synchronize];
-            
-            [self.doneTableView reloadData];
-        }
-    }else{
-        
-    }
+    [self.doneTableView reloadData];
 }
 
 @end

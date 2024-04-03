@@ -15,17 +15,26 @@
 @property (weak, nonatomic) IBOutlet UISegmentedControl *editSelector;
 @property (weak, nonatomic) IBOutlet UILabel *TaskdateTV;
 
+
 @end
 
-@implementation DetailsTaskViewController {
+@implementation DetailsTaskViewController{
     NSUserDefaults *userDefault;
-    NSData *defaultTasks;
+    NSMutableArray *arrTodo ;
+    NSMutableArray *arrInProgress ;
+    NSMutableArray *arrDone ;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    userDefault = [NSUserDefaults standardUserDefaults];
+    
+    arrTodo = [NSMutableArray new];
+    arrDone = [NSMutableArray new];
+    arrInProgress = [NSMutableArray new];
+}
+
+- (void)viewWillAppear:(BOOL)animated{
     
     self.taskNameTV.text = self.task.taskName;
     self.tasDescTv.text = self.task.taskDescription;
@@ -33,6 +42,24 @@
     self.priotoriySelectEdit.selectedSegmentIndex = self.task.taskPriority;
     self.editSelector.selectedSegmentIndex = self.task.taskStatus;
     
+    
+    
+    userDefault = [NSUserDefaults standardUserDefaults];
+    
+    NSDate *tododata = [userDefault objectForKey:@"TaskList"];
+    arrTodo = [NSMutableArray new];
+    arrTodo = [NSKeyedUnarchiver unarchiveObjectWithData:tododata];
+    
+    
+    NSData *inprogressData = [userDefault objectForKey:@"InProgressTaskList"];
+    arrInProgress = [NSMutableArray new];
+    arrInProgress = [NSKeyedUnarchiver unarchiveObjectWithData:inprogressData];
+
+    
+    NSData *doneData = [userDefault objectForKey:@"DoneTaskList"];
+    arrDone = [NSMutableArray new];
+    arrDone = [NSKeyedUnarchiver unarchiveObjectWithData:doneData];
+
 }
 
 - (IBAction)editAction:(id)sender {
@@ -72,18 +99,36 @@
             case 0:
                 // in progress
                 self.task.taskStatus = 0;
+                [arrInProgress addObject:self.task];
+                [arrTodo removeObject:self.task];
                 break;
                 
             case 1:
                 // Done
                 self.task.taskStatus = 1;
+                [arrDone addObject:self.task];
+                [arrTodo removeObject:self.task];
+                [arrInProgress removeObject:self.task];
                 break;
             default:
                 break;
         }
         
+        
+        NSData *toDoData = [NSKeyedArchiver archivedDataWithRootObject:arrTodo];
+        [self->userDefault setObject:toDoData forKey:@"TaskList"];
+        
+        NSData *inProgressData = [NSKeyedArchiver archivedDataWithRootObject:arrInProgress];
+        [self->userDefault setObject:inProgressData forKey:@"InProgressTaskList"];
+        
+        NSData *doneData = [NSKeyedArchiver archivedDataWithRootObject:arrDone];
+        [self->userDefault setObject:doneData forKey:@"DoneTaskList"];
+                
         if ([self.delegate respondsToSelector:@selector(didEditTask:)]) {
             [self.delegate didEditTask:self.task];
+            
+        }else{
+            printf("=========");
         }
         
         [self.navigationController popViewControllerAnimated:YES];

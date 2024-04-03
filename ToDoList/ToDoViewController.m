@@ -28,17 +28,6 @@
     self.noData.hidden = YES;
 
     [self.toDoTableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"toDoCell"];
-    
-    userDefault = [NSUserDefaults standardUserDefaults];
-    defaultTasks = [userDefault objectForKey:@"TaskList"];
-        if (defaultTasks != nil) {
-            self.ToDotaskList = [NSKeyedUnarchiver unarchiveObjectWithData:defaultTasks];
-            } else {
-                self.ToDotaskList = [[NSMutableArray alloc] init];
-            }
-    
-    _searchTF.delegate = self;
-    _searchTF.autocapitalizationType = UITextAutocapitalizationTypeNone;
 }
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
@@ -81,14 +70,13 @@
     
     if (task.taskStatus == -1) {
         [self.ToDotaskList replaceObjectAtIndex:index withObject:task];
-    } else {
+    }else{
         [self.ToDotaskList removeObjectAtIndex:index];
     }
     
-    NSData *defaultTasks = [NSKeyedArchiver archivedDataWithRootObject:self.ToDotaskList];
+    defaultTasks = [NSKeyedArchiver archivedDataWithRootObject:self.ToDotaskList];
     [userDefault setObject:defaultTasks forKey:@"TaskList"];
     [userDefault synchronize];
-    
     [self.toDoTableView reloadData];
 }
 
@@ -105,6 +93,18 @@
 
 
 - (void)viewWillAppear:(BOOL)animated{
+    
+    self.ToDotaskList = [[NSMutableArray alloc] init];
+
+    userDefault = [NSUserDefaults standardUserDefaults];
+    defaultTasks = [userDefault objectForKey:@"TaskList"];
+        self.ToDotaskList = [NSKeyedUnarchiver unarchiveObjectWithData:defaultTasks];
+            
+    
+    _searchTF.delegate = self;
+    _searchTF.autocapitalizationType = UITextAutocapitalizationTypeNone;
+    
+    printf("%lu", (unsigned long)self.ToDotaskList.count);
     [self.toDoTableView reloadData];
 }
 
@@ -179,11 +179,10 @@
     
     selectTask = self.ToDotaskList[indexPath.row];
     
-    
-        
     DetailsTaskViewController *detailViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"DetailsTaskViewController"];
     
     detailViewController.task = selectTask;
+    detailViewController.indexxx = indexPath.row;
     
     detailViewController.delegate = self;
     
