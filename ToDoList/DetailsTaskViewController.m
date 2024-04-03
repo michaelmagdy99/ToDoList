@@ -65,6 +65,7 @@
     
     NSData *doneData = [userDefault objectForKey:@"DoneTaskList"];
     arrDone = [NSMutableArray new];
+    
     arrDone = [NSKeyedUnarchiver unarchiveObjectWithData:doneData];
 
 }
