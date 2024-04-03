@@ -9,6 +9,7 @@
 #import "AddTaskViewController.h"
 #import "TaskModel.h"
 #import "ToDoViewController.h"
+#import <UserNotifications/UserNotifications.h>
 
 @interface AddTaskViewController ()
 
@@ -38,6 +39,17 @@
             } else {
                 self.toDoViewController.ToDotaskList = [NSMutableArray new];
             }
+    
+
+    // Request authorization for notifications
+       UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+       [center requestAuthorizationWithOptions:(UNAuthorizationOptionAlert + UNAuthorizationOptionSound)
+                             completionHandler:^(BOOL granted, NSError * _Nullable error) {
+                                 if (!granted) {
+                                     NSLog(@"Notification authorization denied");
+                                 }
+                             }];
+
 }
 
 - (IBAction)saveTask:(id)sender {
@@ -86,6 +98,8 @@
             break;
     }
     
+    [self scheduleReminderForTask:newTask];
+    
     newTask.taskStatus = -1 ;
     
     [self.toDoViewController.ToDotaskList addObject:newTask];
@@ -97,6 +111,50 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
+- (void)scheduleReminderForTask:(TaskModel *)task {
+    UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
+    content.title = task.taskName;
+    content.body = task.taskDescription;
+    content.sound = [UNNotificationSound defaultSound];
+    
+    // Calculate the date one minute from the current time
+    NSDate *currentDate = [NSDate date];
+    NSDate *taskDate = [currentDate dateByAddingTimeInterval:60]; // Add 60 seconds for one minute
+    
+    // Create a date formatter to convert the taskDate to a string
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
+    NSString *taskDateString = [dateFormatter stringFromDate:taskDate];
+    
+    // Print the scheduled date for debugging
+    NSLog(@"Scheduled Date: %@", taskDateString);
+    
+    // Create the trigger based on the calculated taskDate
+    NSTimeInterval timeInterval = [taskDate timeIntervalSinceNow];
+    if (timeInterval > 0) {
+        UNTimeIntervalNotificationTrigger *trigger = [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:timeInterval repeats:NO];
+        
+        // Create the notification request
+        UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:task.taskName content:content trigger:trigger];
+        
+        // Add the notification request to the notification center
+        UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+        [center addNotificationRequest:request withCompletionHandler:^(NSError * _Nullable error) {
+            if (error) {
+                NSLog(@"Error scheduling notification: %@", error);
+            } else {
+                NSLog(@"Notification scheduled successfully.");
+            }
+        }];
+    }
+}
+
+
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler {
+    
+    completionHandler(UNNotificationPresentationOptionAlert);
+}
 @end
 
 

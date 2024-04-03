@@ -59,13 +59,13 @@
     
     
     NSData *inprogressData = [userDefault objectForKey:@"InProgressTaskList"];
-    arrInProgress = [NSKeyedUnarchiver unarchiveObjectWithData:inprogressData];
     arrInProgress = [NSMutableArray new];
+    arrInProgress = [NSKeyedUnarchiver unarchiveObjectWithData:inprogressData];
 
     
     NSData *doneData = [userDefault objectForKey:@"DoneTaskList"];
-    arrDone = [NSKeyedUnarchiver unarchiveObjectWithData:doneData];
     arrDone = [NSMutableArray new];
+    arrDone = [NSKeyedUnarchiver unarchiveObjectWithData:doneData];
 
 }
 
